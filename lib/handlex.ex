@@ -1,18 +1,63 @@
 defmodule Handlex do
-  @moduledoc """
-  Documentation for `Handlex`.
-  """
+  defmacro left ~> right do
+    Macro.unpipe(left)
+    |> Enum.reduce(fn {x, _}, {y, _} ->
+      quote do
+        unquote(y) |> unquote(x)
+      end
+      |> Code.eval_quoted()
+    end)
+    |> case do
+      {{:ok, value}, _} ->
+        Code.eval_quoted(
+          quote do
+            unquote(value) |> unquote(right)
+          end
+        )
+        |> case do
+          {value, []} ->
+            value
 
-  @doc """
-  Hello world.
+          {value, 0} ->
+            value
 
-  ## Examples
+          value ->
+            value
+        end
 
-      iex> Handlex.hello()
-      :world
+      {value, _} ->
+        value
+    end
+  end
 
-  """
-  def hello do
-    :world
+  defmacro left <~ right do
+    Macro.unpipe(left)
+    |> Enum.reduce(fn {x, _}, {y, _} ->
+      quote do
+        unquote(y) |> unquote(x)
+      end
+      |> Code.eval_quoted()
+    end)
+    |> case do
+      {{:error, value}, _} ->
+        Code.eval_quoted(
+          quote do
+            unquote(value) |> unquote(right)
+          end
+        )
+        |> case do
+          {value, []} ->
+            value
+
+          {value, 0} ->
+            value
+
+          value ->
+            value
+        end
+
+      {value, _} ->
+        value
+    end
   end
 end
