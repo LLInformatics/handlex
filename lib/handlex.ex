@@ -1,63 +1,33 @@
 defmodule Handlex do
   defmacro left ~> right do
-    Macro.unpipe(left)
-    |> Enum.reduce(fn {x, _}, {y, _} ->
-      quote do
-        unquote(y) |> unquote(x)
-      end
-      |> Code.eval_quoted()
-    end)
-    |> case do
-      {{:ok, value}, _} ->
-        Code.eval_quoted(
-          quote do
-            unquote(value) |> unquote(right)
-          end
-        )
-        |> case do
-          {value, []} ->
-            value
+    [{h, _} | t] = Macro.unpipe({:|>, [], [left, generate_case(:ok, right)]})
 
-          {value, 0} ->
-            value
-
-          value ->
-            value
-        end
-
-      {value, _} ->
-        value
+    fun = fn {x, pos}, acc ->
+      Macro.pipe(acc, x, pos)
     end
+
+    :lists.foldl(fun, h, t)
   end
 
   defmacro left <~ right do
-    Macro.unpipe(left)
-    |> Enum.reduce(fn {x, _}, {y, _} ->
-      quote do
-        unquote(y) |> unquote(x)
+    [{h, _} | t] = Macro.unpipe({:|>, [], [left, generate_case(:error, right)]})
+
+    fun = fn {x, pos}, acc ->
+      Macro.pipe(acc, x, pos)
+    end
+
+    :lists.foldl(fun, h, t)
+  end
+
+  defp generate_case(status, func) do
+    quote do
+      case do
+        {unquote(status), val} ->
+          val |> unquote(func)
+
+        val ->
+          val
       end
-      |> Code.eval_quoted()
-    end)
-    |> case do
-      {{:error, value}, _} ->
-        Code.eval_quoted(
-          quote do
-            unquote(value) |> unquote(right)
-          end
-        )
-        |> case do
-          {value, []} ->
-            value
-
-          {value, 0} ->
-            value
-
-          value ->
-            value
-        end
-
-      {value, _} ->
-        value
     end
   end
 end
