@@ -4,7 +4,7 @@ defmodule Handlex.MixProject do
   def project do
     [
       app: :handlex,
-      version: "0.1.0",
+      version: "1.0.0",
       elixir: "~> 1.10",
       package: package(),
       description: description(),
