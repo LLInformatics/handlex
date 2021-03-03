@@ -4,18 +4,22 @@ defmodule Handlex.MixProject do
   def project do
     [
       app: :handlex,
-      version: "1.0.0",
+      version: "1.0.1",
       elixir: "~> 1.10",
       package: package(),
       description: description(),
       deps: deps(),
       name: "Handlex",
-      source_url: "https://github.com/llinformatics/handlex"
+      source_url: "https://github.com/llinformatics/handlex",
+      docs: [
+        main: "Handlex",
+        extras: ["README.md"]
+      ]
     ]
   end
 
   defp description() do
-    "Package with ~> and <~ pipe operators to handle :ok and :error tuples"
+    "Package with ~> and <~ pipe operators to handle {:ok, value} and {:error, value} tuples"
   end
 
   defp package() do
