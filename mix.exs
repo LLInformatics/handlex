@@ -4,7 +4,7 @@ defmodule Handlex.MixProject do
   def project do
     [
       app: :handlex,
-      version: "1.0.1",
+      version: "1.0.2",
       elixir: "~> 1.10",
       package: package(),
       description: description(),
@@ -25,9 +25,9 @@ defmodule Handlex.MixProject do
   defp package() do
     [
       name: "handlex",
-      maintainers: ["Dawid Boksa"],
+      maintainers: ["Dawid Boksa", "LLInformatics"],
       files: ~w(lib mix.exs README* LICENSE*),
-      licenses: ["Apache-2.0"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/llinformatics/handlex"}
     ]
   end
